@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// TestParse verifies that the Parse function correctly parses command-line flags into a Config struct.
 func TestParse(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -83,6 +84,7 @@ func TestParse(t *testing.T) {
 	}
 }
 
+// TestPatterns verifies that the Patterns function correctly extracts positional arguments while ignoring flags.
 func TestPatterns(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -129,6 +131,7 @@ func TestPatterns(t *testing.T) {
 	}
 }
 
+// TestConfig verifies that the Config struct fields can be set and accessed correctly.
 func TestConfig(t *testing.T) {
 	t.Run("Config struct fields", func(t *testing.T) {
 		cfg := Config{
@@ -145,7 +148,7 @@ func TestConfig(t *testing.T) {
 	})
 }
 
-// TestParseWithInvalidFlags tests edge cases with flag parsing
+// TestParseEdgeCases verifies Parse function handles edge cases like empty marker strings correctly.
 func TestParseEdgeCases(t *testing.T) {
 	t.Run("empty marker values", func(t *testing.T) {
 		// Reset pflag state

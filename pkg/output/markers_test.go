@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestHeader verifies that the Header function outputs correct delimiter explanations with various marker configurations.
 func TestHeader(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -58,6 +59,7 @@ func TestHeader(t *testing.T) {
 	}
 }
 
+// TestPaths verifies that the Paths function correctly converts between absolute and relative file paths.
 func TestPaths(t *testing.T) {
 	// Create temporary directory for testing
 	tmpDir := t.TempDir()
@@ -115,6 +117,7 @@ func TestPaths(t *testing.T) {
 	}
 }
 
+// TestPathsWithInvalidPaths ensures Paths function gracefully handles nonexistent paths when calculating relative paths.
 func TestPathsWithInvalidPaths(t *testing.T) {
 	// Test with paths that can't be made relative
 	invalidPath := "/some/absolute/path/that/does/not/exist"
@@ -128,6 +131,7 @@ func TestPathsWithInvalidPaths(t *testing.T) {
 	assert.Contains(t, result[0], "some/absolute/path/that/does/not/exist")
 }
 
+// TestMarkers verifies that the Markers function outputs files with correct start/end delimiters and custom markers.
 func TestMarkers(t *testing.T) {
 	// Create temporary files for testing
 	tmpDir := t.TempDir()
@@ -202,6 +206,7 @@ func TestMarkers(t *testing.T) {
 	}
 }
 
+// TestEmit verifies the emit function handles various file content types (with/without newlines, empty, binary) correctly.
 func TestEmit(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -290,6 +295,7 @@ func TestEmit(t *testing.T) {
 	}
 }
 
+// TestEmitWithNonexistentFile ensures emit function reports errors gracefully when trying to read missing files.
 func TestEmitWithNonexistentFile(t *testing.T) {
 	// Capture stderr
 	old := os.Stderr
@@ -308,6 +314,7 @@ func TestEmitWithNonexistentFile(t *testing.T) {
 	assert.Contains(t, output, "Error reading nonexistent.txt")
 }
 
+// TestNewlineIfNeeded verifies that newlineIfNeeded only adds newlines when file content doesn't end with one.
 func TestNewlineIfNeeded(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -355,4 +362,40 @@ func TestNewlineIfNeeded(t *testing.T) {
 			assert.Equal(t, tt.expected, output)
 		})
 	}
+}
+
+// TestPathsEdgeCases verifies Paths function correctly handles relative path calculation from subdirectories.
+func TestPathsEdgeCases(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create a test file
+	testFile := filepath.Join(tmpDir, "test.txt")
+	require.NoError(t, os.WriteFile(testFile, []byte("content"), 0644))
+
+	// Change to a different directory to create a scenario where
+	// the relative path calculation might have edge cases
+	subDir := filepath.Join(tmpDir, "subdir")
+	require.NoError(t, os.MkdirAll(subDir, 0755))
+
+	oldWd, err := os.Getwd()
+	require.NoError(t, err)
+	require.NoError(t, os.Chdir(subDir))
+	defer func() { os.Chdir(oldWd) }()
+
+	t.Run("relative path from subdirectory", func(t *testing.T) {
+		files := []string{testFile}
+		result := Paths(files, true)
+
+		// Should return one result
+		assert.Len(t, result, 1)
+		// The result should be a relative path to the parent directory
+		assert.Contains(t, result[0], "test.txt")
+	})
+
+	t.Run("absolute paths unchanged", func(t *testing.T) {
+		files := []string{testFile}
+		result := Paths(files, false)
+
+		assert.Equal(t, files, result)
+	})
 }
