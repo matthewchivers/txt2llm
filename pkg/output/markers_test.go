@@ -119,9 +119,9 @@ func TestPathsWithInvalidPaths(t *testing.T) {
 	// Test with paths that can't be made relative
 	invalidPath := "/some/absolute/path/that/does/not/exist"
 	files := []string{invalidPath}
-	
+
 	result := Paths(files, true)
-	
+
 	// Should have one result, either original or relative version
 	assert.Len(t, result, 1)
 	// The result should be some version of the path (either original or relative)

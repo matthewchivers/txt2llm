@@ -2,7 +2,7 @@ package resolve
 
 import (
 	"os"
-	"path/filepath" 
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,24 +11,24 @@ import (
 // TestFilesEdgeCases covers additional edge cases for better test coverage
 func TestFilesEdgeCases(t *testing.T) {
 	tmpDir := t.TempDir()
-	
+
 	// Test with a directory that exists but is empty
 	emptyDir := filepath.Join(tmpDir, "empty")
-	err := os.MkdirAll(emptyDir, 0755)
+	err := os.MkdirAll(emptyDir, 0750)
 	assert.NoError(t, err)
-	
+
 	oldWd, err := os.Getwd()
 	assert.NoError(t, err)
 	assert.NoError(t, os.Chdir(tmpDir))
 	defer func() { os.Chdir(oldWd) }()
-	
+
 	t.Run("empty directory non-recursive", func(t *testing.T) {
 		files, err := Files([]string{"empty"}, false)
 		assert.Error(t, err) // Should error because no files found
 		assert.Nil(t, files)
 		assert.Contains(t, err.Error(), "no files matched")
 	})
-	
+
 	t.Run("empty directory recursive", func(t *testing.T) {
 		files, err := Files([]string{"empty"}, true)
 		assert.Error(t, err) // Should error because no files found
@@ -46,10 +46,10 @@ func TestAddDirErrorHandling(t *testing.T) {
 				collected = append(collected, path)
 			}
 		}
-		
+
 		// This should not panic and should gracefully handle the error
 		addDir("/nonexistent/directory/path", false, add)
-		
+
 		// Should collect nothing
 		assert.Empty(t, collected)
 	})

@@ -1,3 +1,4 @@
+// Package cli handles command-line argument parsing and configuration for txt2llm.
 package cli
 
 import (

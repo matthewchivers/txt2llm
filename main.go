@@ -1,3 +1,4 @@
+// Package main provides txt2llm, a tool for concatenating files with markers for LLM input.
 package main
 
 import (
