@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestFiles verifies that the Files function correctly resolves various patterns (files, directories, globs) to deduplicated file paths.
 func TestFiles(t *testing.T) {
 	// Create temporary directory structure for testing
 	tmpDir := t.TempDir()
@@ -170,6 +171,7 @@ func TestFiles(t *testing.T) {
 	}
 }
 
+// TestAddDir verifies that addDir correctly collects files from directories with both recursive and non-recursive modes.
 func TestAddDir(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -234,6 +236,7 @@ func TestAddDir(t *testing.T) {
 	}
 }
 
+// TestAddGlob verifies that addGlob correctly matches files using glob patterns and filters out directories.
 func TestAddGlob(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -301,4 +304,51 @@ func TestAddGlob(t *testing.T) {
 			assert.ElementsMatch(t, tt.expected, collected)
 		})
 	}
+}
+
+// TestFilesEdgeCases verifies Files function returns appropriate errors when no files match patterns (empty directories).
+func TestFilesEdgeCases(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Test with a directory that exists but is empty
+	emptyDir := filepath.Join(tmpDir, "empty")
+	err := os.MkdirAll(emptyDir, 0750)
+	assert.NoError(t, err)
+
+	oldWd, err := os.Getwd()
+	assert.NoError(t, err)
+	assert.NoError(t, os.Chdir(tmpDir))
+	defer func() { os.Chdir(oldWd) }()
+
+	t.Run("empty directory non-recursive", func(t *testing.T) {
+		files, err := Files([]string{"empty"}, false)
+		assert.Error(t, err) // Should error because no files found
+		assert.Nil(t, files)
+		assert.Contains(t, err.Error(), "no files matched")
+	})
+
+	t.Run("empty directory recursive", func(t *testing.T) {
+		files, err := Files([]string{"empty"}, true)
+		assert.Error(t, err) // Should error because no files found
+		assert.Nil(t, files)
+		assert.Contains(t, err.Error(), "no files matched")
+	})
+}
+
+// TestAddDirErrorHandling verifies addDir gracefully handles nonexistent directories without panicking.
+func TestAddDirErrorHandling(t *testing.T) {
+	t.Run("nonexistent directory", func(t *testing.T) {
+		var collected []string
+		add := func(path string) {
+			if path != "" {
+				collected = append(collected, path)
+			}
+		}
+
+		// This should not panic and should gracefully handle the error
+		addDir("/nonexistent/directory/path", false, add)
+
+		// Should collect nothing
+		assert.Empty(t, collected)
+	})
 }

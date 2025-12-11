@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestMainUnit tests the main function directly with mocked args
+// TestMainUnit verifies the main function correctly processes command-line arguments and outputs files with proper markers.
 func TestMainUnit(t *testing.T) {
 	// Create a test file
 	tmpDir := t.TempDir()
