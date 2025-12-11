@@ -1,0 +1,38 @@
+version: 2
+
+run:
+  timeout: 5m
+  tests: false  # Don't lint test files for now
+
+linters-settings:
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  gocyclo:
+    min-complexity: 10
+  lll:
+    line-length: 140
+  misspell:
+    locale: GB
+
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - goconst
+    - misspell
+    - unconvert
+    - whitespace
+    - revive
+    - gocyclo
+
+issues:
+  exclude-rules:
+    - text: "G304.*Potential file inclusion via variable"
+      linters:
+        - gosec
+  new: false

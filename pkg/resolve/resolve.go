@@ -1,3 +1,4 @@
+// Package resolve handles file pattern resolution for txt2llm.
 package resolve
 
 import (
@@ -51,7 +52,7 @@ func Files(patterns []string, recursive bool) ([]string, error) {
 // If recursive is true, it walks the directory tree.
 func addDir(dir string, recursive bool, add func(string)) {
 	if recursive {
-		filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
+		_ = filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
 			if err != nil {
 				return nil
 			}

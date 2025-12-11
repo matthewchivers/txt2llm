@@ -64,7 +64,6 @@ func TestParse(t *testing.T) {
 				MarkerSuffix: "---",
 			},
 		},
-
 	}
 
 	for _, tt := range tests {

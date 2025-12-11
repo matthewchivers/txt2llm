@@ -1,3 +1,4 @@
+// Package output handles file output formatting with markers for txt2llm.
 package output
 
 import (
@@ -43,7 +44,7 @@ func emit(srcPath, outPath, markerPrefix, markerSuffix string) {
 		return
 	}
 	fmt.Printf("%sSTART:%s%s\n", markerPrefix, outPath, markerSuffix)
-	os.Stdout.Write(data)
+	_, _ = os.Stdout.Write(data) // Ignore write errors to stdout
 	newlineIfNeeded(data)
 	fmt.Printf("%sEND:%s%s\n\n", markerPrefix, outPath, markerSuffix)
 }
