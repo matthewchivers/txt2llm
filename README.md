@@ -81,7 +81,7 @@ txt2llm --marker-prefix "```" --marker-suffix "```" *.py
 
 ## 🎯 Example Output
 
-Command: `txt2llm ./main.go ./utils/helper.go`
+Command: `txt2llm ./main.go ./utils/helper.go --relative`
 
 
 ```
